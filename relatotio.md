@@ -123,9 +123,45 @@ COMO TRABALHAR
 ## Prompt 4 - Etapa 3: controllers
 
 - **Fonte:** opencode ([modelo/provedor])
-- **Data:** [data]
-- **Quem fez:** [nome]
-- **Prompt:** [texto exato que foi enviado]
+- **Data:** [29/10]
+- **Quem fez:** [Hugo Gonçalves Rigo]
+- **Prompt:** [Prompt enviado à IA:
+
+"crie minha parte do codigo e depois faça o relatorio da minha parte"
+
+Contexto fornecido:
+
+Foram enviados os arquivos guia.pdf e relatotio.md, contendo as instruções do trabalho, a divisão das tarefas e o modelo de relatório.
+
+Parte desenvolvida:
+
+Fiquei responsável pelo desenvolvimento do arquivo src/controller/controller_locacao.py, que realiza o gerenciamento das locações de veículos no sistema.
+
+Foram implementadas as seguintes funcionalidades:
+
+Inserir locação: cadastra uma nova locação, verificando a existência do cliente e do veículo.
+
+Atualizar locação: permite modificar os dados de uma locação existente.
+
+Remover locação: exclui uma locação mediante confirmação do usuário.
+
+Listar locações: apresenta as locações cadastradas, mostrando o cliente e o veículo.
+
+Verificar existência: consulta o banco para identificar se uma locação está cadastrada.
+
+O que foi revisado e corrigido:
+
+Durante a elaboração, foram conferidos os nomes das tabelas, colunas e sequence com o script SQL do projeto. Também foram considerados os models existentes e o padrão de conexão com o banco Oracle.
+
+O código utiliza comandos SQL como SELECT, INSERT, UPDATE e DELETE, além de JOIN e TO_DATE.
+
+Foram realizadas verificações de sintaxe e testes simulados durante a geração do código. Não foram realizados testes no banco Oracle real.
+
+Resultado:
+
+O arquivo controller_locacao.py foi adicionado à pasta src/controller do projeto. Realizei o commit e o push para o repositório do grupo no GitHub.
+
+Minha contribuição foi o desenvolvimento do controller responsável pelas operações de cadastro, consulta, atualização e exclusão das locações de veículos.]
 - **O que o grupo fez com a resposta:** [...]
 
 ## Prompt 5 - Etapa 4: relatórios
