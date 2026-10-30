@@ -162,7 +162,53 @@ Resultado:
 O arquivo controller_locacao.py foi adicionado à pasta src/controller do projeto. Realizei o commit e o push para o repositório do grupo no GitHub.
 
 Minha contribuição foi o desenvolvimento do controller responsável pelas operações de cadastro, consulta, atualização e exclusão das locações de veículos.]
+
 - **O que o grupo fez com a resposta:** [...]
+
+
+
+- **Fonte:** Gemini ([modelo/provedor])
+- **Data:** 30/10/2026
+- **Quem fez:** Davi Nicolini Seschini
+- **Prompt enviado à IA:**
+
+
+Crie a classe ControllerVeiculo no arquivo src/controller/controller_veiculo.py para um sistema em Python que utiliza banco de dados Oracle sem ORM. Faça um relatório da minha parte.
+
+Requisitos funcionais do ControllerVeiculo:
+1. Método inserir():
+   - Solicita a placa do veículo (chave alternativa/única).
+   - Verifica se a placa já existe através do método auxiliar verificar_existencia(). Se existir, exibe mensagem e cancela a inserção.
+   - Solicita os dados: modelo, ano e valor_diaria.
+   - Executa o INSERT na tabela VEICULOS usando a sequence VEICULOS_ID_SEQ.NEXTVAL para o campo ID (Primary Key).
+   - Recupera os dados do registro recém-criado, instancia e retorna o objeto Veiculo (de model.veiculos), exibindo a confirmação com to_string().
+
+2. Método atualizar():
+   - Solicita a placa do veículo alvo e verifica se ele existe no banco. Se não existir, avisa e encerra.
+   - Solicita os novos valores para modelo, ano e valor_diaria (mantendo o ID e a PLACA inalterados).
+   - Executa o UPDATE no banco e exibe o registro atualizado.
+
+3. Método remover():
+   - Solicita a placa do veículo e verifica se ele existe.
+   - Recupera a PK (ID) do veículo.
+   - Verifica a integridade referencial com a tabela LOCACOES (checa se existem registros com ID_VEICULO igual ao ID do veículo).
+   - Se existirem locações vinculadas, exibe um aviso e pergunta se o usuário deseja remover também todas as locações do veículo (S/N). Se o usuário confirmar ('S'), remove primeiro os registros em LOCACOES e depois o registro em VEICULOS. Caso contrário, cancela a operação.
+   - Se não houver locações vinculadas, pede confirmação padrão e remove o veículo.
+
+4. Método listar():
+   - Executa um SELECT trazendo os campos ID, PLACA e MODELO da tabela VEICULOS e exibe o DataFrame do pandas (ou mensagem de que está vazio).
+
+5. Método auxiliar verificar_existencia(oracle, placa):
+   - Executa uma consulta por PLACA na tabela VEICULOS e retorna True se encontrar registro ou False caso contrário.
+
+Diretrizes técnicas:
+- Utilizar a classe OracleQueries (de conexion.oracle_queries) para execução de SQL e conversão para DataFrame via sqlToDataFrame().
+- Não utilizar ORM; apenas comandos SQL diretos.
+- Respeitar estritamente os nomes de tabelas, colunas e sequences definidos em scripts/create_tables.sql.
+- Código simples, comentários curtos em português.
+
+- **O que o grupo fez com a resposta:** [...]
+
 
 ## Prompt 5 - Etapa 4: relatórios
 
