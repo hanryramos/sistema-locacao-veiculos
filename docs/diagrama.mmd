@@ -1,0 +1,28 @@
+%% Diagrama relacional - Sistema de Locação de Veículos
+erDiagram
+    CLIENTES ||--o{ LOCACOES : "realiza"
+    VEICULOS ||--o{ LOCACOES : "é locado em"
+
+    CLIENTES {
+        NUMBER ID PK
+        VARCHAR2 NOME
+        VARCHAR2 CPF UK
+        VARCHAR2 TELEFONE
+    }
+
+    VEICULOS {
+        NUMBER ID PK
+        VARCHAR2 MODELO
+        VARCHAR2 PLACA UK
+        NUMBER ANO
+        NUMBER VALOR_DIARIA
+    }
+
+    LOCACOES {
+        NUMBER ID PK
+        NUMBER ID_CLIENTE FK
+        NUMBER ID_VEICULO FK
+        DATE DATA_RETIRADA
+        DATE DATA_DEVOLUCAO
+        NUMBER VALOR_TOTAL
+    }
