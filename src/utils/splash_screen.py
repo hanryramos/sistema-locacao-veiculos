@@ -34,15 +34,6 @@ class SplashScreen:
             except Exception:
                 pass
 
-    def get_total_clientes(self):
-        return self._get_total("clientes")
-
-    def get_total_veiculos(self):
-        return self._get_total("veiculos")
-
-    def get_total_locacoes(self):
-        return self._get_total("locacoes")
-
     def get_updated_screen(self):
         # Uma falha de conexão não deve esconder as informações do sistema.
         totais = {}

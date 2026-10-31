@@ -10,7 +10,7 @@ Banco de Dados. O sistema possui três entidades:
 O sistema oferece:
 
 - Tela inicial com a quantidade de registros de cada tabela
-- Inserir, atualizar, listar e remover clientes, veículos e locações
+- Inserir, atualizar e remover clientes, veículos e locações, com listagem nas operações de atualização e remoção
 - Após inserir, remover ou atualizar, o sistema pergunta se deseja repetir a operação
 - A atualização permite alterar todos os atributos não-chave e exibe o registro atualizado
 - Relatório de total arrecadado por modelo de veículo (GROUP BY)
@@ -20,6 +20,7 @@ O sistema oferece:
 
 - `scripts/create_tables.sql`: criação das tabelas, constraints, sequences e FKs
 - `docs/diagrama.mmd`: diagrama relacional (formato Mermaid)
+- `docs/diagrama.png`: imagem do diagrama relacional
 - `src/principal.py`: menu principal do sistema
 - `src/controller/`: controllers de cliente, veículo e locação
 - `src/model/`: classes de modelo
@@ -51,7 +52,9 @@ O sistema oferece:
    ```
 
    Na primeira execução, os `DROP` do início do script podem gerar
-   `ORA-00942`/`ORA-02289`; o script Python ignora esses erros de propósito.
+   `ORA-00942`/`ORA-02289`. O script Python ignora esses erros de propósito.
+   Se executar o SQL manualmente no SQL Developer/SQLcl, ignore esses erros e
+   continue a execução.
 
 3. Teste a conexão:
 

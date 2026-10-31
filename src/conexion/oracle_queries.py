@@ -9,9 +9,7 @@
 #                  (2) https://cx-oracle.readthedocs.io/en/latest/user_guide/plsql_execution.html
 #                  (3) https://cx-oracle.readthedocs.io/en/latest/index.html
 ###########################################################################
-import json
 from pathlib import Path
-
 try:
     import cx_Oracle
 except ImportError:
@@ -113,34 +111,6 @@ class OracleQueries:
         self._execute(query, params)
         rows = self.cur.fetchall()
         return DataFrame(rows, columns=[col[0].lower() for col in self.cur.description])
-
-    def sqlToMatrix(self, query: str, params=None) -> tuple:
-        '''
-        Esse método irá executar uma query
-        Parameters:
-        - query: consulta utilizada para recuperação dos dados
-        - params: dicionário (ou lista) com os valores das variáveis de bind
-        return: uma matriz (lista de listas), uma lista com os nomes das colunas(atributos) da(s) tabela(s)
-        '''
-        self._execute(query, params)
-        rows = self.cur.fetchall()
-        matrix = [list(row) for row in rows]
-        columns = [col[0].lower() for col in self.cur.description]
-        return matrix, columns
-
-    def sqlToJson(self, query: str, params=None):
-        '''
-        Esse método irá executar uma query
-        Parameters:
-        - query: consulta utilizada para recuperação dos dados
-        - params: dicionário (ou lista) com os valores das variáveis de bind
-        return: um objeto json
-        '''
-        self._execute(query, params)
-        columns = [col[0].lower() for col in self.cur.description]
-        self.cur.rowfactory = lambda *args: dict(zip(columns, args))
-        rows = self.cur.fetchall()
-        return json.dumps(rows, default=str)
 
     def write(self, query: str, params=None):
         if not self.can_write:

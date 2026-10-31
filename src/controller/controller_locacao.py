@@ -98,9 +98,6 @@ class ControllerLocacao:
         )
         return not df_locacao.empty
 
-    def verificar_existencia(self, oracle: OracleQueries, id_locacao: int) -> bool:
-        return self.verifica_existencia_locacao(oracle, id_locacao)
-
     # ------------------------------------------------------------------
     # Solicitação dos dados de uma locação
     # ------------------------------------------------------------------
@@ -290,7 +287,3 @@ class ControllerLocacao:
             return locacao
         finally:
             oracle.close()
-
-    # Nome alternativo, seguindo os controllers do projeto de exemplo.
-    def excluir_locacao(self):
-        return self.remover_locacao()
