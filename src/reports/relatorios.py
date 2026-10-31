@@ -24,34 +24,29 @@ class Relatorio:
         try:
             oracle.connect()
             resultado = oracle.sqlToDataFrame(consulta)
+            print(f"\n===== {descricao} =====")
             if resultado.empty:
-                print("\\nNenhum registro encontrado.")
+                print("Nenhum registro encontrado.")
             else:
                 print(resultado.to_string(index=False))
+        except Exception as erro:
+            print(f"\nNão foi possível gerar o relatório: {erro}")
         finally:
-            # Fecha a conexão mesmo se ocorrer algum erro na consulta.
             try:
                 oracle.close()
             except Exception:
                 pass
 
-        input(f"\\nPressione Enter para sair de {descricao}...")
+        input("\nPressione Enter para voltar...")
 
     def get_relatorio_arrecadacao_por_modelo(self):
         self._exibir_relatorio(
             self.query_arrecadacao_por_modelo,
-            "Relatório de Arrecadação por Modelo"
+            "Total arrecadado por modelo de veículo"
         )
 
     def get_relatorio_locacoes_detalhado(self):
         self._exibir_relatorio(
             self.query_locacoes_detalhado,
-            "Relatório de Locações"
+            "Locações com dados dos clientes e veículos"
         )
-
-    # Métodos com nomes curtos para facilitar a chamada pelo principal.py.
-    def get_relatorio_1(self):
-        self.get_relatorio_arrecadacao_por_modelo()
-
-    def get_relatorio_2(self):
-        self.get_relatorio_locacoes_detalhado()

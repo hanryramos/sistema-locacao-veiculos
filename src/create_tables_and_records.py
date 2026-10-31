@@ -1,54 +1,37 @@
+from pathlib import Path
+
 from conexion.oracle_queries import OracleQueries
 
-def create_tables(query:str):
-    list_of_commands = query.split(";")
-
-    oracle = OracleQueries(can_write=True)
-    oracle.connect()
-
-    for command in list_of_commands:    
-        if len(command) > 0:
-            print(command)
-            try:
-                oracle.executeDDL(command)
-                print("Successfully executed")
-            except Exception as e:
-                print(e)            
-
-def generate_records(query:str, sep:str=';'):
-    list_of_commands = query.split(sep)
-
-    oracle = OracleQueries(can_write=True)
-    oracle.connect()
-
-    for command in list_of_commands:    
-        if len(command) > 0:
-            print(command)
-            oracle.write(command)
-            print("Successfully executed")
 
 def run():
+    """Executa o script scripts/create_tables.sql no banco configurado."""
+    sql_path = Path(__file__).resolve().parents[1] / "scripts" / "create_tables.sql"
+    comandos = sql_path.read_text(encoding="utf-8")
 
-    with open("../sql/create_tables_pedidos.sql") as f:
-        query_create = f.read()
+    oracle = OracleQueries(can_write=True)
+    try:
+        oracle.connect()
+        print("Criando tabelas, sequences e relacionamentos...")
 
-    print("Creating tables...")
-    create_tables(query=query_create)
-    print("Tables successfully created!")
+        for comando in comandos.split(";"):
+            comando = comando.strip()
+            if not comando:
+                continue
+            try:
+                oracle.executeDDL(comando)
+                print("OK")
+            except Exception as erro:
+                mensagem = str(erro)
+                # Na primeira execução os DROP não encontram os objetos.
+                if "ORA-00942" in mensagem or "ORA-02289" in mensagem:
+                    print("(objeto ainda não existia, ignorado)")
+                else:
+                    raise
 
-    with open("../sql/inserting_samples_records.sql") as f:
-        query_generate_records = f.read()
+        print("Banco criado com sucesso!")
+    finally:
+        oracle.close()
 
-    print("Gerenating records")
-    generate_records(query=query_generate_records)
-    print("Records successfully generated!")
-
-    with open("../sql/inserting_samples_related_records.sql") as f:
-        query_generate_related_records = f.read()
-
-    print("Gerenating records")
-    generate_records(query=query_generate_related_records, sep='--')
-    print("Records successfully generated!")
 
 if __name__ == '__main__':
     run()

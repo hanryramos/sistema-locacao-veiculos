@@ -2,8 +2,9 @@
     Sistema de Locação de Veículos
     Script de criação das tabelas, chaves, restrições e sequences.
 
-    Execute este script com o mesmo usuário configurado no arquivo .env
-    (esse usuário será o dono das tabelas).
+    Execute este script com o mesmo usuário configurado em
+    src/conexion/passphrase/authentication.oracle (esse usuário será o
+    dono das tabelas).
 
     Observação: na primeira execução, os comandos DROP abaixo podem gerar
     erro ORA-00942 (tabela/sequence inexistente). Isso é esperado.

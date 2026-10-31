@@ -4,8 +4,8 @@ MENU_PRINCIPAL = """========== SISTEMA DE LOCAÇÃO DE VEÍCULOS ==========
 Menu Principal
 1 - Relatórios
 2 - Inserir
-3 - Remover
-4 - Atualizar
+3 - Atualizar
+4 - Remover
 0 - Sair
 """
 
@@ -26,11 +26,11 @@ MENU_ENTIDADES = """========== ENTIDADES ==========
 QUERY_COUNT = "SELECT COUNT(1) AS total_{tabela} FROM {tabela}"
 
 
-def clear_console(wait_time: int = 1):
+def clear_console(wait_time: float = 0):
     """Limpa o terminal após o tempo informado."""
     import os
     from time import sleep
 
     if wait_time > 0:
         sleep(wait_time)
-    os.system("clear")
+    os.system("cls" if os.name == "nt" else "clear")

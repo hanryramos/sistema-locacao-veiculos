@@ -1,23 +1,17 @@
 from conexion.oracle_queries import OracleQueries
 
-oracle = OracleQueries(can_write=True)
-oracle.connect()
-result = oracle.sqlToMatrix("select * from dual")
-print(result)
 
-print()
+def run():
+    """Testa a conexão com o Oracle configurado em authentication.oracle."""
+    oracle = OracleQueries()
+    try:
+        oracle.connect()
+        resultado = oracle.sqlToDataFrame("SELECT 1 AS OK FROM DUAL")
+        print("Conexão com o Oracle realizada com sucesso!")
+        print(resultado.to_string(index=False))
+    finally:
+        oracle.close()
 
-result = oracle.sqlToDataFrame("select * from dual")
-print(result)
 
-print()
-
-result = oracle.sqlToJson("select * from dual")
-print(result)
-
-oracle.executeDDL("create table test_float (x numeric(5, 3))")
-oracle.write("insert into test_float values(7.1)")
-oracle.write("insert into test_float values(8.4)")
-result = oracle.sqlToDataFrame("select * from test_float")
-print(result)
-oracle.executeDDL("drop table test_float")
+if __name__ == '__main__':
+    run()

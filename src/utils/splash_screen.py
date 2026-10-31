@@ -53,18 +53,25 @@ class SplashScreen:
                 totais[tabela] = "indisponível"
 
         integrantes = ", ".join(self.created_by)
-        return f"""
-+--------------------------------------------------------------+
-|                 {self.nome_sistema:<36} |
-+--------------------------------------------------------------+
-| TOTAL DE REGISTROS                                            |
-|   CLIENTES:  {totais['clientes']:<10}                                  |
-|   VEÍCULOS:  {totais['veiculos']:<10}                                  |
-|   LOCAÇÕES:  {totais['locacoes']:<10}                                  |
-+--------------------------------------------------------------+
-| INTEGRANTES: {integrantes}
-| DISCIPLINA:  {self.disciplina}
-| SEMESTRE:    {self.semestre}
-| PROFESSOR:   {self.professor}
-+--------------------------------------------------------------+
-"""
+        largura = 64
+        separador = "+" + "-" * (largura + 2) + "+"
+
+        def linha(texto: str = "") -> str:
+            return f"| {texto:<{largura}} |"
+
+        return "\n".join([
+            separador,
+            linha(self.nome_sistema.center(largura)),
+            separador,
+            linha("TOTAL DE REGISTROS"),
+            linha(f"  CLIENTES: {totais['clientes']}"),
+            linha(f"  VEÍCULOS: {totais['veiculos']}"),
+            linha(f"  LOCAÇÕES: {totais['locacoes']}"),
+            separador,
+            linha(f"INTEGRANTES: {integrantes}"),
+            linha(f"DISCIPLINA:  {self.disciplina}"),
+            linha(f"SEMESTRE:    {self.semestre}"),
+            linha(f"PROFESSOR:   {self.professor}"),
+            separador,
+        ])
+
