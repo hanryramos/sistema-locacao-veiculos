@@ -207,6 +207,38 @@ Diretrizes técnicas:
 - Respeitar estritamente os nomes de tabelas, colunas e sequences definidos em scripts/create_tables.sql.
 - Código simples, comentários curtos em português.
 
+
+Parte desenvolvida:
+
+Fiquei responsável pelo desenvolvimento do arquivo src/controller/controller_veiculo.py, que realiza o gerenciamento dos veículos no sistema.
+
+Foram implementadas as seguintes funcionalidades:
+
+Inserir veículo: cadastra um novo veículo, solicitando a placa, modelo, ano e valor da diária. O método consulta a existência prévia da placa para evitar duplicidades e utiliza a sequence VEICULOS_ID_SEQ.NEXTVAL no Oracle para a geração da chave primária (ID), retornando o objeto Veiculo instanciado e exibindo a confirmação via to_string().
+
+Atualizar veículo: permite alterar o modelo, o ano e o valor da diária de um veículo cadastrado a partir da consulta pela placa, mantendo inalteradas a chave primária e a própria placa.
+
+Remover veículo: realiza a exclusão do veículo após consulta pela placa e obtenção do seu ID. Para garantir a integridade referencial, o método verifica se o ID do veículo consta como Chave Estrangeira na tabela LOCACOES. Se houver vínculos, alerta o usuário e possibilita a exclusão prévia em cascata das locações associadas antes de deletar o registro pai em VEICULOS.
+
+Listar veículos: realiza um SELECT dos campos ID, PLACA e MODELO da tabela VEICULOS e exibe os dados cadastrados em tela através de um DataFrame do pandas (ou mensagem informando caso a tabela esteja vazia).
+
+Verificar existência: função auxiliar que realiza uma consulta pela chave alternativa (PLACA) na tabela VEICULOS e retorna um boolean indicando se o veículo já se encontra cadastrado.
+
+O que foi revisado e corrigido:
+
+Durante o desenvolvimento, validou-se a correspondência exata dos nomes da tabela (VEICULOS), colunas (ID, MODELO, PLACA, ANO, VALOR_DIARIA) e da sequence (VEICULOS_ID_SEQ) com o script SQL do projeto. Ajustaram-se as conexões com o banco utilizando a classe OracleQueries (com can_write=True nos métodos de escrita) e garantiu-se a conversão e leitura direta dos dados via sqlToDataFrame().
+
+O código utiliza comandos SQL nativos como SELECT, INSERT, UPDATE e DELETE, sem a utilização de ORM.
+
+Foram realizadas verificações de sintaxe, validações da lógica de tratamento de FK (remoção em cascata) e testes de fluxo no controller.
+
+Resultado:
+
+O arquivo controller_veiculo.py foi finalizado e integrado à pasta src/controller do repositório. O commit e o push foram realizados com sucesso no GitHub do grupo.
+
+Minha contribuição foi o desenvolvimento do controller responsável pelo CRUD completo e pelo controle de integridade referencial dos veículos no sistema.
+
+
 - **O que o grupo fez com a resposta:** [...]
 
 
