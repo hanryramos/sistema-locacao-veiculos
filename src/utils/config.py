@@ -4,8 +4,8 @@ MENU_PRINCIPAL = """========== SISTEMA DE LOCAÇÃO DE VEÍCULOS ==========
 Menu Principal
 1 - Relatórios
 2 - Inserir
-3 - Atualizar
-4 - Remover
+3 - Remover
+4 - Atualizar
 0 - Sair
 """
 

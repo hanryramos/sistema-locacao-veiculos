@@ -1,28 +1,30 @@
 %% Diagrama relacional - Sistema de Locação de Veículos
+%% PK = chave primária, FK = chave estrangeira, UK = chave única
+%% NOT NULL = atributo obrigatório
 erDiagram
     CLIENTES ||--o{ LOCACOES : "realiza"
     VEICULOS ||--o{ LOCACOES : "é locado em"
 
     CLIENTES {
-        NUMBER ID PK
-        VARCHAR2 NOME
-        VARCHAR2 CPF UK
-        VARCHAR2 TELEFONE
+        NUMBER ID PK "NOT NULL"
+        VARCHAR2 NOME "NOT NULL, até 255 caracteres"
+        VARCHAR2 CPF UK "NOT NULL, 11 dígitos"
+        VARCHAR2 TELEFONE "NOT NULL, até 20 caracteres"
     }
 
     VEICULOS {
-        NUMBER ID PK
-        VARCHAR2 MODELO
-        VARCHAR2 PLACA UK
-        NUMBER ANO
-        NUMBER VALOR_DIARIA
+        NUMBER ID PK "NOT NULL"
+        VARCHAR2 MODELO "NOT NULL, até 100 caracteres"
+        VARCHAR2 PLACA UK "NOT NULL, até 10 caracteres"
+        NUMBER ANO "NOT NULL, entre 1900 e 2100"
+        NUMBER VALOR_DIARIA "NOT NULL, maior que zero"
     }
 
     LOCACOES {
-        NUMBER ID PK
-        NUMBER ID_CLIENTE FK
-        NUMBER ID_VEICULO FK
-        DATE DATA_RETIRADA
-        DATE DATA_DEVOLUCAO
-        NUMBER VALOR_TOTAL
+        NUMBER ID PK "NOT NULL"
+        NUMBER ID_CLIENTE FK "NOT NULL"
+        NUMBER ID_VEICULO FK "NOT NULL"
+        DATE DATA_RETIRADA "NOT NULL"
+        DATE DATA_DEVOLUCAO "NOT NULL, maior ou igual à retirada"
+        NUMBER VALOR_TOTAL "NOT NULL, maior ou igual a zero"
     }

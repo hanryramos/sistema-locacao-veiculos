@@ -35,6 +35,17 @@ class ControllerVeiculo:
             return placa
 
     @staticmethod
+    def _ler_id(mensagem: str) -> int:
+        while True:
+            try:
+                valor = int(input(mensagem).strip())
+                if valor > 0:
+                    return valor
+            except ValueError:
+                pass
+            print("Digite um ID inteiro maior que zero.")
+
+    @staticmethod
     def _ler_ano(mensagem: str) -> int:
         while True:
             try:
@@ -59,22 +70,42 @@ class ControllerVeiculo:
     # ------------------------------------------------------------------
     # Consultas auxiliares
     # ------------------------------------------------------------------
-    def _buscar_veiculo(self, oracle: OracleQueries, placa: str):
-        df_veiculo = oracle.sqlToDataFrame(
-            "SELECT ID, MODELO, PLACA, ANO, VALOR_DIARIA FROM VEICULOS "
-            "WHERE PLACA = :placa",
-            {"placa": placa},
-        )
+    @staticmethod
+    def _df_para_veiculo(df_veiculo):
         if df_veiculo.empty:
             return None
         linha = df_veiculo.iloc[0]
         return Veiculo(int(linha["id"]), linha["modelo"], linha["placa"],
                        int(linha["ano"]), float(linha["valor_diaria"]))
 
+    def _buscar_veiculo_por_id(self, oracle: OracleQueries, id_veiculo: int):
+        df_veiculo = oracle.sqlToDataFrame(
+            "SELECT ID, MODELO, PLACA, ANO, VALOR_DIARIA FROM VEICULOS "
+            "WHERE ID = :id",
+            {"id": id_veiculo},
+        )
+        return self._df_para_veiculo(df_veiculo)
+
+    def _buscar_veiculo_por_placa(self, oracle: OracleQueries, placa: str):
+        df_veiculo = oracle.sqlToDataFrame(
+            "SELECT ID, MODELO, PLACA, ANO, VALOR_DIARIA FROM VEICULOS "
+            "WHERE PLACA = :placa",
+            {"placa": placa},
+        )
+        return self._df_para_veiculo(df_veiculo)
+
     def verificar_existencia(self, oracle: OracleQueries, placa: str) -> bool:
         df_veiculo = oracle.sqlToDataFrame(
             "SELECT PLACA FROM VEICULOS WHERE PLACA = :placa",
             {"placa": placa},
+        )
+        return not df_veiculo.empty
+
+    def verificar_existencia_por_id(self, oracle: OracleQueries,
+                                    id_veiculo: int) -> bool:
+        df_veiculo = oracle.sqlToDataFrame(
+            "SELECT ID FROM VEICULOS WHERE ID = :id",
+            {"id": id_veiculo},
         )
         return not df_veiculo.empty
 
@@ -105,7 +136,7 @@ class ControllerVeiculo:
                  "ano": ano, "valor": valor_diaria},
             )
 
-            novo_veiculo = self._buscar_veiculo(oracle, placa)
+            novo_veiculo = self._buscar_veiculo_por_placa(oracle, placa)
             print("\nVeículo cadastrado com sucesso!")
             if novo_veiculo is not None:
                 print(novo_veiculo.to_string())
@@ -121,24 +152,40 @@ class ControllerVeiculo:
                 return None
 
             print("\n--- Atualizar Veículo ---")
-            placa = self._ler_placa("Placa do veículo que deseja atualizar: ")
+            id_veiculo = self._ler_id("ID do veículo que deseja atualizar: ")
 
-            if not self.verificar_existencia(oracle, placa):
-                print(f"O veículo com placa {placa} não está cadastrado.")
+            if not self.verificar_existencia_por_id(oracle, id_veiculo):
+                print(f"Veículo com ID {id_veiculo} não encontrado.")
                 return None
 
+            veiculo_atual = self._buscar_veiculo_por_id(oracle, id_veiculo)
+            if veiculo_atual is None:
+                print("Não foi possível carregar o veículo.")
+                return None
+
+            print("\nDados atuais:")
+            print(veiculo_atual.to_string())
+            print("\nInforme os novos dados:")
+
             novo_modelo = self._ler_texto("Novo modelo: ", 100)
+            nova_placa = self._ler_placa("Nova placa: ")
             novo_ano = self._ler_ano("Novo ano: ")
             novo_valor = self._ler_valor_diaria("Novo valor da diária: R$ ")
 
+            placa_atual = (veiculo_atual.get_placa() or "").upper()
+            if (nova_placa != placa_atual
+                    and self.verificar_existencia(oracle, nova_placa)):
+                print(f"A placa {nova_placa} já pertence a outro veículo.")
+                return None
+
             oracle.write(
-                "UPDATE VEICULOS SET MODELO = :modelo, ANO = :ano, "
-                "VALOR_DIARIA = :valor WHERE PLACA = :placa",
-                {"modelo": novo_modelo, "ano": novo_ano,
-                 "valor": novo_valor, "placa": placa},
+                "UPDATE VEICULOS SET MODELO = :modelo, PLACA = :placa, "
+                "ANO = :ano, VALOR_DIARIA = :valor WHERE ID = :id",
+                {"modelo": novo_modelo, "placa": nova_placa,
+                 "ano": novo_ano, "valor": novo_valor, "id": id_veiculo},
             )
 
-            veiculo = self._buscar_veiculo(oracle, placa)
+            veiculo = self._buscar_veiculo_por_id(oracle, id_veiculo)
             print("\nVeículo atualizado com sucesso!")
             if veiculo is not None:
                 print(veiculo.to_string())
@@ -154,21 +201,29 @@ class ControllerVeiculo:
                 return None
 
             print("\n--- Remover Veículo ---")
-            placa = self._ler_placa("Placa do veículo que deseja remover: ")
+            id_veiculo = self._ler_id("ID do veículo que deseja remover: ")
 
-            if not self.verificar_existencia(oracle, placa):
-                print(f"O veículo com placa {placa} não existe.")
+            if not self.verificar_existencia_por_id(oracle, id_veiculo):
+                print(f"Veículo com ID {id_veiculo} não encontrado.")
                 return None
 
-            veiculo = self._buscar_veiculo(oracle, placa)
+            veiculo = self._buscar_veiculo_por_id(oracle, id_veiculo)
             if veiculo is None:
                 print("Não foi possível carregar o veículo.")
                 return None
             print(veiculo.to_string())
 
+            confirmacao = input(
+                f"Tem certeza que deseja excluir o veículo ID {id_veiculo}? (s/n): "
+            )
+            if confirmacao.strip().lower() != "s":
+                print("Operação cancelada.")
+                return None
+
+            # Verifica se o veículo é referenciado por locações (FK).
             df_locacoes = oracle.sqlToDataFrame(
                 "SELECT COUNT(1) FROM LOCACOES WHERE ID_VEICULO = :id",
-                {"id": veiculo.get_id()},
+                {"id": id_veiculo},
             )
             qtd_locacoes = int(df_locacoes.iloc[0, 0])
 
@@ -182,19 +237,12 @@ class ControllerVeiculo:
                     return None
                 oracle.write(
                     "DELETE FROM LOCACOES WHERE ID_VEICULO = :id",
-                    {"id": veiculo.get_id()},
+                    {"id": id_veiculo},
                 )
-            else:
-                confirmacao = input(
-                    f"Tem certeza que deseja excluir o veículo {placa}? (s/n): "
-                )
-                if confirmacao.strip().lower() != "s":
-                    print("Operação cancelada.")
-                    return None
 
             oracle.write(
                 "DELETE FROM VEICULOS WHERE ID = :id",
-                {"id": veiculo.get_id()},
+                {"id": id_veiculo},
             )
             print("Veículo removido com sucesso!")
             return veiculo

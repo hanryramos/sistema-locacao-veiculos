@@ -11,6 +11,8 @@ O sistema oferece:
 
 - Tela inicial com a quantidade de registros de cada tabela
 - Inserir, atualizar, listar e remover clientes, veículos e locações
+- Após inserir, remover ou atualizar, o sistema pergunta se deseja repetir a operação
+- A atualização permite alterar todos os atributos não-chave e exibe o registro atualizado
 - Relatório de total arrecadado por modelo de veículo (GROUP BY)
 - Relatório de locações com os dados dos clientes e veículos (JOIN)
 

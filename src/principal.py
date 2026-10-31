@@ -16,15 +16,24 @@ def ler_opcao(mensagem: str) -> int:
             print("Digite apenas números.")
 
 
-def executar_acao(acao) -> bool:
+def perguntar_sim_nao(mensagem: str) -> bool:
+    while True:
+        resposta = input(mensagem).strip().lower()
+        if resposta in ("s", "sim"):
+            return True
+        if resposta in ("n", "nao", "não"):
+            return False
+        print("Responda com 's' (sim) ou 'n' (não).")
+
+
+def executar_acao(acao):
     """Executa uma operação e evita que um erro do banco derrube o sistema."""
     try:
-        acao()
-        return True
+        return acao()
     except Exception as erro:
         print(f"\nErro ao executar a operação: {erro}")
         input("Pressione Enter para continuar...")
-        return False
+        return None
 
 
 class Sistema:
@@ -39,50 +48,74 @@ class Sistema:
         print(self.tela_inicial.get_updated_screen())
         config.clear_console(1)
 
+    # ------------------------------------------------------------------
+    # Menus
+    # ------------------------------------------------------------------
     def menu_relatorios(self):
-        print(config.MENU_RELATORIOS)
-        opcao = ler_opcao("Escolha um relatório [0-2]: ")
-        if opcao == 0:
-            return
-        if opcao == 1:
-            executar_acao(self.relatorio.get_relatorio_arrecadacao_por_modelo)
-        elif opcao == 2:
-            executar_acao(self.relatorio.get_relatorio_locacoes_detalhado)
-        else:
+        while True:
+            print(config.MENU_RELATORIOS)
+            opcao = ler_opcao("Escolha um relatório [0-2]: ")
+
+            if opcao == 0:
+                return
+            if opcao == 1:
+                executar_acao(self.relatorio.get_relatorio_arrecadacao_por_modelo)
+            elif opcao == 2:
+                executar_acao(self.relatorio.get_relatorio_locacoes_detalhado)
+            else:
+                print("Opção inválida.")
+
+    def escolher_entidade(self) -> int:
+        while True:
+            print(config.MENU_ENTIDADES)
+            opcao = ler_opcao("Escolha uma entidade [0-3]: ")
+            if opcao in (0, 1, 2, 3):
+                return opcao
             print("Opção inválida.")
 
-    def menu_entidades(self, acoes):
-        print(config.MENU_ENTIDADES)
-        opcao = ler_opcao("Escolha uma entidade [0-3]: ")
-        if opcao == 0:
-            return
-        acao = acoes.get(opcao)
-        if acao is None:
-            print("Opção inválida.")
-            return
-        executar_acao(acao)
+    def executar_operacoes(self, acoes, pergunta_continuar):
+        """Executa a ação escolhida e pergunta se o usuário deseja repetir."""
+        while True:
+            opcao = self.escolher_entidade()
+            if opcao == 0:
+                return
 
+            resultado = executar_acao(acoes[opcao])
+
+            # Operação cancelada, sem registro ou com erro: volta ao menu principal.
+            if resultado is None:
+                return
+
+            if not perguntar_sim_nao(pergunta_continuar):
+                return
+
+    # ------------------------------------------------------------------
+    # Operações
+    # ------------------------------------------------------------------
     def inserir(self):
-        self.menu_entidades({
+        self.executar_operacoes({
             1: self.ctrl_cliente.inserir,
             2: self.ctrl_veiculo.inserir,
             3: self.ctrl_locacao.inserir_locacao,
-        })
-
-    def atualizar(self):
-        self.menu_entidades({
-            1: self.ctrl_cliente.atualizar,
-            2: self.ctrl_veiculo.atualizar,
-            3: self.ctrl_locacao.atualizar_locacao,
-        })
+        }, "Deseja inserir mais algum registro? (s/n): ")
 
     def remover(self):
-        self.menu_entidades({
+        self.executar_operacoes({
             1: self.ctrl_cliente.remover,
             2: self.ctrl_veiculo.remover,
             3: self.ctrl_locacao.remover_locacao,
-        })
+        }, "Deseja excluir mais algum registro? (s/n): ")
 
+    def atualizar(self):
+        self.executar_operacoes({
+            1: self.ctrl_cliente.atualizar,
+            2: self.ctrl_veiculo.atualizar,
+            3: self.ctrl_locacao.atualizar_locacao,
+        }, "Deseja atualizar mais algum registro? (s/n): ")
+
+    # ------------------------------------------------------------------
+    # Loop principal
+    # ------------------------------------------------------------------
     def executar(self):
         self.mostrar_tela_inicial()
 
@@ -102,10 +135,10 @@ class Sistema:
                 self.inserir()
                 self.mostrar_tela_inicial()
             elif opcao == 3:
-                self.atualizar()
+                self.remover()
                 self.mostrar_tela_inicial()
             elif opcao == 4:
-                self.remover()
+                self.atualizar()
                 self.mostrar_tela_inicial()
             else:
                 print("Opção inválida.")
