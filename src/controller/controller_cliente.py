@@ -2,6 +2,7 @@ from conexion.oracle_queries import OracleQueries
 from model.clientes import Cliente
 
 
+
 class ControllerCliente:
 
   def __init__(self):
