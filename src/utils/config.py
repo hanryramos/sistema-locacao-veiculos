@@ -1,38 +1,36 @@
-MENU_PRINCIPAL = """Menu Principal
-1 - Relatórios
-2 - Inserir Registros
-3 - Atualizar Registros
-4 - Remover Registros
-5 - Sair
-"""
+"""Textos e configurações dos menus do sistema."""
 
-MENU_RELATORIOS = """Relatórios
-1 - Relatório de Pedidos por Fornecedores
-2 - Relatório de Pedidos
-3 - Relatório de Produtos
-4 - Relatório de Clientes
-5 - Relatório de Fornecedores
-6 - Relatório de Itens de Pedidos
+MENU_PRINCIPAL = """========== SISTEMA DE LOCAÇÃO DE VEÍCULOS ==========
+Menu Principal
+1 - Relatórios
+2 - Inserir
+3 - Remover
+4 - Atualizar
 0 - Sair
 """
 
-MENU_ENTIDADES = """Entidades
-1 - PRODUTOS
-2 - CLIENTES
-3 - FORNECEDORES
-4 - PEDIDOS
-5 - ITENS DE PEDIDOS
+MENU_RELATORIOS = """========== RELATÓRIOS ==========
+1 - Total arrecadado por modelo de veículo (GROUP BY)
+2 - Locações com dados dos clientes e veículos (JOIN)
+0 - Voltar
 """
 
-# Consulta de contagem de registros por tabela
-QUERY_COUNT = 'select count(1) as total_{tabela} from {tabela}'
+MENU_ENTIDADES = """========== ENTIDADES ==========
+1 - Clientes
+2 - Veículos
+3 - Locações
+0 - Voltar
+"""
 
-def clear_console(wait_time:int=3):
-    '''
-       Esse método limpa a tela após alguns segundos
-       wait_time: argumento de entrada que indica o tempo de espera
-    '''
+# Consulta usada pela tela inicial para contar os registros de cada tabela.
+QUERY_COUNT = "SELECT COUNT(1) AS total_{tabela} FROM {tabela}"
+
+
+def clear_console(wait_time: int = 1):
+    """Limpa o terminal após o tempo informado."""
     import os
     from time import sleep
-    sleep(wait_time)
+
+    if wait_time > 0:
+        sleep(wait_time)
     os.system("clear")
